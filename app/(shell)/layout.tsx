@@ -1,20 +1,32 @@
-"use client";
-
+'use client'
+import { useState, useEffect, useRef } from "react";
 import Header from "@/components/layout/header";
 import { Sidebar } from "@/components/layout/sidebar";
-import { useEffect } from "react";
 import { useAppContext } from "@/context/appContext";
+
 export default function ShellLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const { sidebarOpen, setSidebarOpen } = useAppContext();
+  const headerRef = useRef<HTMLElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (window.innerWidth < 768) {
-        setSidebarOpen(false);
+    function updateHeight() {
+      if (headerRef.current) {
+        setHeaderHeight(headerRef.current.offsetHeight);
       }
+    }
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setSidebarOpen(false);
     }
   }, []);
 
@@ -26,14 +38,18 @@ export default function ShellLayout({
       />
 
       <div className="flex-1 flex flex-col">
+   
         <Header
+          ref={headerRef as React.Ref<HTMLDivElement>}
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
           sidebarOpen={sidebarOpen}
         />
 
+
         <main
-          className={`flex-1 pt-[30dvh] md:pt-[20dvh] lg:pt-[33dvh] transition-all duration-300 ${
-            sidebarOpen ? "md:pl-[30dvw] lg:pl-[20dvw] " : "md:pl-16"
+          style={{ paddingTop: headerHeight }}
+          className={`flex-1 transition-all duration-300 ${
+            sidebarOpen ? "md:pl-[30dvw] lg:pl-[20dvw]" : "md:pl-16"
           }`}
         >
           <div className="p-6">{children}</div>
