@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import { ToastProvider } from "@/components/ui/toast-provider";
 import { SearchProvider } from "@/context/searchContext";
 import { AppProvider } from "@/context/appContext";
 
-const inter = Inter({ subsets: ["latin"] });
+const publicsans = Public_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "FinTrack - Financial Management",
@@ -19,12 +19,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={publicsans.className}>
         <AppProvider>
           <SearchProvider>
-            <ToastProvider>
-              {children}
-            </ToastProvider>
+            <ToastProvider>{children}</ToastProvider>
           </SearchProvider>
         </AppProvider>
       </body>
