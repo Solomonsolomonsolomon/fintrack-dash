@@ -33,22 +33,16 @@ export function EmptyState({
 
   return (
     <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-      <div className="mb-4">
-        {icon || getDefaultIcon()}
-      </div>
-      
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-        {title}
-      </h3>
-      
-      <p className="text-gray-600 mb-6 max-w-sm">
-        {description}
-      </p>
-      
+      <div className="mb-4">{icon || getDefaultIcon()}</div>
+
+      <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+
+      <p className="text-gray-600 mb-6 max-w-sm">{description}</p>
+
       {action && (
         <Button
           onClick={action.onClick}
-          className="flex items-center gap-2 bg-teal-500"
+          className="flex items-center gap-2 bg-[##4B8B9F]"
         >
           {action.icon || <Plus className="w-4 h-4" />}
           {action.label}

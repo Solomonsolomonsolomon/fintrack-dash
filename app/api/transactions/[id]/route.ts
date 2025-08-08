@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sampleTransactions } from "@/data/transactionData";
 
-// GET one transaction
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -32,7 +32,7 @@ export async function GET(
   }
 }
 
-// UPDATE a transaction
+
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -86,7 +86,7 @@ export async function PUT(
   }
 }
 
-// DELETE a transaction
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -101,9 +101,7 @@ export async function DELETE(
         { status: 404 }
       );
     }
-
     sampleTransactions.splice(transactionIndex, 1);
-
     return NextResponse.json({
       success: true,
       message: "Transaction deleted successfully",

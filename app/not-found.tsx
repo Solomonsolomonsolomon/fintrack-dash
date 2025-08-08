@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Home, ArrowLeft } from "lucide-react";
@@ -19,7 +19,7 @@ export default function NotFound() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild className="bg-teal-500">
+          <Button asChild className="bg-[#4B8B9F]">
             <Link href="/dashboard">
               <Home className="w-4 h-4 mr-2" />
               Go to Dashboard
@@ -33,4 +33,4 @@ export default function NotFound() {
       </div>
     </div>
   );
-} 
+}

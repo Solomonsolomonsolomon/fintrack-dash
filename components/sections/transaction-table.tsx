@@ -103,9 +103,9 @@ export default function TransactionTable() {
       <div className="bg-white rounded-lg shadow-sm border-gray-200">
         <div className="p-6 text-center">
           <p className="text-red-600 mb-4">{error}</p>
-          <button 
+          <button
             onClick={refetch}
-            className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+            className="px-4 py-2 bg-[##4B8B9F] text-white rounded-md hover:bg-[##4B8B9F]"
           >
             Try Again
           </button>

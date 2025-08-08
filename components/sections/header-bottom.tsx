@@ -37,7 +37,7 @@ export default function HeaderBottom({
           </div>
 
           <div className="flex items-center gap-3">
-            <Button className="flex items-center gap-2 rounded-full bg-teal-600 hover:bg-teal-700 text-white px-4">
+            <Button className="flex items-center gap-2 rounded-full bg-[#4B8B9F] hover:bg-[##4B8B9F] text-white px-4">
               <Share className="w-4 h-4" />
               <span>Share</span>
             </Button>
@@ -81,16 +81,24 @@ export default function HeaderBottom({
                 const active =
                   pathname === tab.href ||
                   (tab.href === "/dashboard" && pathname === "/");
+
                 return (
                   <Link key={tab.href} href={tab.href} className="-mb-px">
                     <button
-                      className={`pb-3 text-sm font-medium transition-colors border-b-2 ${
+                      className={`relative pb-3 text-sm font-medium transition-colors ${
                         active
-                          ? "text-gray-900 border-gray-900"
-                          : "text-gray-600 border-transparent hover:text-gray-900"
+                          ? "text-gray-900"
+                          : "text-gray-600 hover:text-gray-900"
                       }`}
                     >
                       {tab.label}
+                      <span
+                        className={`absolute left-1/2 -bottom-[2px] h-[3px] rounded-full transition-all duration-300 ${
+                          active
+                            ? "bg-[#4B8B9F] w-[140%] -translate-x-1/2"
+                            : "bg-transparent w-0 group-hover:w-[140%]"
+                        }`}
+                      ></span>
                     </button>
                   </Link>
                 );
