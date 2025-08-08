@@ -1,4 +1,4 @@
-import TransactionTable  from "@/components/sections/transaction-table";
+import TransactionTable from "@/components/sections/transaction-table";
 
 export default function TransactionsPage() {
   return (
@@ -9,6 +9,7 @@ export default function TransactionsPage() {
           View and manage all your financial transactions in one place.
         </p>
       </div>
+      
       <TransactionTable />
     </div>
   );

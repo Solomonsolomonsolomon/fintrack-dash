@@ -5,22 +5,18 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LayoutGrid, Menu, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-
 interface HeaderTopProps {
   onMenuClick?: () => void;
 }
-
 export default function HeaderTop({ onMenuClick }: HeaderTopProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const searchBtnRef = useRef<HTMLButtonElement | null>(null);
-
   useEffect(() => {
     if (searchOpen) inputRef.current?.focus();
   }, [searchOpen]);
-
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node;
@@ -36,7 +32,6 @@ export default function HeaderTop({ onMenuClick }: HeaderTopProps) {
     function handleEsc(e: KeyboardEvent) {
       if (e.key === "Escape") setSearchOpen(false);
     }
-
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEsc);
     return () => {
@@ -44,7 +39,6 @@ export default function HeaderTop({ onMenuClick }: HeaderTopProps) {
       document.removeEventListener("keydown", handleEsc);
     };
   }, [searchOpen]);
-
   function handleSubmit(e?: React.FormEvent) {
     e?.preventDefault();
 
@@ -96,7 +90,7 @@ export default function HeaderTop({ onMenuClick }: HeaderTopProps) {
           </Button>
 
           <Avatar className="h-8 w-8">
-            <AvatarImage src="/user.jpg" />
+            <AvatarImage src="/avatar1.png" />
             <AvatarFallback>JD</AvatarFallback>
           </Avatar>
         </div>

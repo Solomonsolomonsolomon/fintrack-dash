@@ -1,4 +1,6 @@
 import { Transaction } from "@/@types";
+
+// export const sampleTransactions = [];
 export const sampleTransactions: Transaction[] = [
   {
     id: "1",

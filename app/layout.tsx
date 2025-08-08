@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Public_Sans } from "next/font/google";
+import {  Public_Sans } from "next/font/google";
 import "./globals.css";
 import { AppProvider } from "@/context/appContext";
 
