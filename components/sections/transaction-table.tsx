@@ -30,7 +30,12 @@ export default function TransactionTable() {
     search: debouncedSearchTerm,
   });
 
- 
+  // Update filters when search changes
+  useEffect(() => {
+    setFilters({ search: debouncedSearchTerm });
+  }, [debouncedSearchTerm, setFilters]);
+
+  // Handle search results
   useEffect(() => {
     if (debouncedSearchTerm && !loading && isSearching) {
       setIsSearching(false);
@@ -83,7 +88,7 @@ export default function TransactionTable() {
     );
   };
 
-
+  // Show loading state
   if (loading || isSearching) {
     return (
       <div className="bg-white rounded-lg shadow-sm border-gray-200">
@@ -92,7 +97,7 @@ export default function TransactionTable() {
     );
   }
 
-
+  // Show error state
   if (error) {
     return (
       <div className="bg-white rounded-lg shadow-sm border-gray-200">
@@ -109,7 +114,7 @@ export default function TransactionTable() {
     );
   }
 
-
+  // Show empty state
   if (transactions.length === 0) {
     const isSearchEmpty = debouncedSearchTerm && !loading;
     
@@ -128,7 +133,7 @@ export default function TransactionTable() {
               ? {
                   label: "Clear search",
                   onClick: () => {
-                    
+                    // Clear search will be handled by the search context
                   },
                 }
               : {
@@ -143,123 +148,90 @@ export default function TransactionTable() {
     );
   }
 
- return (
-   <div className="bg-white overflow-hidden">
-     {/* Desktop Table */}
-     <div className="overflow-x-auto hidden md:block">
-       <table className="w-full text-sm">
-         <thead>
-           <tr>
-             <th
-               className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-               onClick={() => handleSort("date")}
-             >
-               <div className="flex items-center gap-2">
-                 Date {getSortIcon("date")}
-               </div>
-             </th>
-             <th
-               className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-               onClick={() => handleSort("remark")}
-             >
-               <div className="flex items-center gap-2">
-                 Remark {getSortIcon("remark")}
-               </div>
-             </th>
-             <th
-               className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-               onClick={() => handleSort("amount")}
-             >
-               <div className="flex items-center gap-2">
-                 Amount {getSortIcon("amount")}
-               </div>
-             </th>
-             <th
-               className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-               onClick={() => handleSort("type")}
-             >
-               <div className="flex items-center gap-2">
-                 Type {getSortIcon("type")}
-               </div>
-             </th>
-             <th className="py-3 px-4 text-left font-medium text-gray-700">
-               Currency
-             </th>
-           </tr>
-         </thead>
-         <tbody className="divide-y divide-gray-200">
-           {transactions.map((transaction) => (
-             <tr key={transaction.id} className="hover:bg-gray-50">
-               <td className="py-3 px-4">{formatDate(transaction.date)}</td>
-               <td className="py-3 px-4">{transaction.remark}</td>
-               <td
-                 className={cn(
-                   "py-3 px-4 font-medium",
-                   transaction.amount >= 0 ? "text-green-600" : "text-red-600"
-                 )}
-               >
-                 {transaction.amount >= 0 ? "+" : "-"}
-                 {formatAmount(transaction.amount)}
-               </td>
-               <td className="py-3 px-4">
-                 <div className="flex items-center">
-                   <span
-                     className={cn(
-                       "w-2 h-2 rounded-full mr-2",
-                       transaction.type === "credit"
-                         ? "bg-green-500"
-                         : "bg-red-500"
-                     )}
-                   />
-                   <span className="capitalize">{transaction.type}</span>
-                 </div>
-               </td>
-               <td className="py-3 px-4">{transaction.currency}</td>
-             </tr>
-           ))}
-         </tbody>
-       </table>
-     </div>
-
-     {/* Mobile Cards */}
-     <div className="space-y-4 md:hidden p-4">
-       {transactions.map((transaction) => (
-         <div
-           key={transaction.id}
-           className="border rounded-lg p-4 shadow-sm bg-white"
-         >
-           <div className="flex justify-between">
-             <span className="text-gray-500">Date</span>
-             <span className="font-medium">{formatDate(transaction.date)}</span>
-           </div>
-           <div className="flex justify-between">
-             <span className="text-gray-500">Remark</span>
-             <span>{transaction.remark}</span>
-           </div>
-           <div className="flex justify-between">
-             <span className="text-gray-500">Amount</span>
-             <span
-               className={cn(
-                 "font-medium",
-                 transaction.amount >= 0 ? "text-green-600" : "text-red-600"
-               )}
-             >
-               {transaction.amount >= 0 ? "+" : "-"}
-               {formatAmount(transaction.amount)}
-             </span>
-           </div>
-           <div className="flex justify-between">
-             <span className="text-gray-500">Type</span>
-             <span className="capitalize">{transaction.type}</span>
-           </div>
-           <div className="flex justify-between">
-             <span className="text-gray-500">Currency</span>
-             <span>{transaction.currency}</span>
-           </div>
-         </div>
-       ))}
-     </div>
-   </div>
- );
-
+  return (
+    <div className="bg-white overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="">
+            <tr>
+              <th
+                className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                onClick={() => handleSort("date")}
+              >
+                <div className="flex items-center gap-2">
+                  Date {getSortIcon("date")}
+                </div>
+              </th>
+              <th
+                className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                onClick={() => handleSort("remark")}
+              >
+                <div className="flex items-center gap-2">
+                  Remark {getSortIcon("remark")}
+                </div>
+              </th>
+              <th
+                className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                onClick={() => handleSort("amount")}
+              >
+                <div className="flex items-center gap-2">
+                  Amount {getSortIcon("amount")}
+                </div>
+              </th>
+              <th
+                className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
+                onClick={() => handleSort("type")}
+              >
+                <div className="flex items-center gap-2">
+                  Type {getSortIcon("type")}
+                </div>
+              </th>
+              <th className="py-3 px-4 text-left font-medium text-gray-700">
+                Currency
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {transactions.map((transaction) => (
+              <tr key={transaction.id} className="hover:bg-gray-50 transition-colors">
+                <td className="py-3 px-4 text-gray-700">
+                  {formatDate(transaction.date)}
+                </td>
+                <td className="py-3 px-4 text-gray-900">
+                  {transaction.remark}
+                </td>
+                <td
+                  className={cn(
+                    "py-3 px-4 font-medium",
+                    transaction.amount >= 0 ? "text-green-600" : "text-red-600"
+                  )}
+                >
+                  {transaction.amount >= 0 ? "+" : "-"}
+                  {formatAmount(transaction.amount)}
+                </td>
+                <td className="py-3 px-4">
+                  <div className="flex items-center">
+                    <span
+                      className={cn(
+                        "w-2 h-2 rounded-full mr-2",
+                        transaction.type === "credit"
+                          ? "bg-green-500"
+                          : "bg-red-500"
+                      )}
+                    />
+                    <span className="capitalize text-gray-700">
+                      {transaction.type}
+                    </span>
+                  </div>
+                </td>
+                <td className="py-3 px-4 text-gray-700">
+                  {transaction.currency}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sampleTransactions } from "@/data/transactionData";
 import { Transaction } from "@/@types";
-
+type Key = string | number;
 function filterTransactions(
   transactions: Transaction[],
   filters: {
@@ -17,12 +17,14 @@ function filterTransactions(
 
   if (filters.search) {
     const searchTerm = filters.search.toLowerCase();
+    console.log("Searching for:", searchTerm);
     filtered = filtered.filter(
       (t) =>
         t.remark.toLowerCase().includes(searchTerm) ||
         t.currency.toLowerCase().includes(searchTerm) ||
         t.type.toLowerCase().includes(searchTerm)
     );
+    console.log("Filtered results:", filtered.length);
   }
 
   return filtered;
@@ -34,19 +36,16 @@ function sortTransactions(
   sortOrder: "asc" | "desc" = "desc"
 ) {
   return [...transactions].sort((a, b) => {
-    let aValue: any = a[sortBy as keyof Transaction];
-    let bValue: any = b[sortBy as keyof Transaction];
-
+    let aValue: Key = a[sortBy as keyof Transaction];
+    let bValue: Key = b[sortBy as keyof Transaction];
     if (sortBy === "date") {
       aValue = new Date(aValue).getTime();
       bValue = new Date(bValue).getTime();
     }
-
     if (sortBy === "amount") {
-      aValue = Math.abs(aValue);
-      bValue = Math.abs(bValue);
+      aValue = Math.abs(aValue as number);
+      bValue = Math.abs(bValue as number);
     }
-
     if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
     if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
     return 0;
@@ -85,6 +84,9 @@ export async function GET(request: NextRequest) {
     const sortOrder =
       (searchParams.get("sortOrder") as "asc" | "desc") || "desc";
 
+    console.log("API received search:", search);
+    console.log("API received type:", type);
+
     if (page < 1 || limit < 1 || limit > 100) {
       return NextResponse.json(
         {
@@ -107,6 +109,8 @@ export async function GET(request: NextRequest) {
     );
 
     const result = paginateTransactions(filteredTransactions, page, limit);
+
+    console.log("API returning:", result.data.length, "transactions");
 
     return NextResponse.json({
       success: true,

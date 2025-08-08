@@ -98,7 +98,7 @@ export default function HeaderTop({ onMenuClick }: HeaderTopProps) {
             size="icon"
             variant="ghost"
             onClick={() => setSearchOpen((s) => !s)}
-            ref={searchBtnRef as any}
+            ref={searchBtnRef}
             aria-expanded={searchOpen}
             aria-label={searchOpen ? "Close search" : "Open search"}
           >

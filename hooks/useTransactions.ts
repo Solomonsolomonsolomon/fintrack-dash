@@ -4,6 +4,7 @@ import {
   Transaction,
   UseTransactionsOptions,
   UseTransactionsReturn,
+  PaginationInfo,
 } from "@/@types";
 
 export function useTransactions(
@@ -20,9 +21,7 @@ export function useTransactions(
   } = options;
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [pagination, setPagination] = useState<
-    PaginatedResponse<Transaction>["pagination"] | null
-  >(null);
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
@@ -40,6 +39,7 @@ export function useTransactions(
       setError(null);
 
       const response = await transactionApi.getAll(filters);
+
       setTransactions(response.data);
       setPagination(response.pagination);
     } catch (err) {
@@ -121,7 +121,6 @@ export function useTransactions(
       setFilters((prev) => ({
         ...prev,
         ...newFilters,
-
         page: newFilters.page ?? 1,
       }));
     },

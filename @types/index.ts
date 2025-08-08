@@ -1,4 +1,4 @@
-import { PaginatedResponse } from "@/lib/api";
+
 export enum PageType {
   OVERVIEW = "OVERVIEW",
   TRANSACTIONS = "TRANSACTIONS",
@@ -16,6 +16,7 @@ export interface Transaction {
   currency: string;
   type: "credit" | "debit";
 }
+
 export interface DashboardSummary {
   totalBalance: number;
   totalCredits: number;
@@ -25,6 +26,13 @@ export interface DashboardSummary {
   creditsChange: number;
   debitsChange: number;
   transactionChange: number;
+}
+
+export interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 export interface UseTransactionsOptions {
@@ -39,15 +47,12 @@ export interface UseTransactionsOptions {
 
 export interface UseTransactionsReturn {
   transactions: Transaction[];
-  pagination: any;
+  pagination: PaginationInfo | null;
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
   createTransaction: (transaction: Omit<Transaction, "id">) => Promise<void>;
-  updateTransaction: (
-    id: string,
-    transaction: Partial<Transaction>
-  ) => Promise<void>;
+  updateTransaction: (id: string, transaction: Partial<Transaction>) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
   setFilters: (filters: Partial<UseTransactionsOptions>) => void;
 }
