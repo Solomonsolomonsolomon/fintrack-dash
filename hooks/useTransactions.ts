@@ -40,7 +40,6 @@ export function useTransactions(
       setError(null);
 
       const response = await transactionApi.getAll(filters);
-
       setTransactions(response.data);
       setPagination(response.pagination);
     } catch (err) {

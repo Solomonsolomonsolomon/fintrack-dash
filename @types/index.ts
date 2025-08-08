@@ -39,7 +39,7 @@ export interface UseTransactionsOptions {
 
 export interface UseTransactionsReturn {
   transactions: Transaction[];
-  pagination: PaginatedResponse<Transaction>["pagination"] | null;
+  pagination: any;
   loading: boolean;
   error: string | null;
   refetch: () => Promise<void>;
@@ -50,4 +50,11 @@ export interface UseTransactionsReturn {
   ) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
   setFilters: (filters: Partial<UseTransactionsOptions>) => void;
+}
+export interface SearchContextType {
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  debouncedSearchTerm: string;
+  isSearching: boolean;
+  setIsSearching: (searching: boolean) => void;
 }

@@ -36,9 +36,10 @@ export function Sidebar({ className, isOpen = true, onToggle }: SidebarProps) {
     <>
       <aside
         className={cn(
-          
           "fixed left-0 top-10 md:top-16 h-[calc(100dvh-2rem)] md:h-[calc(100vh-10rem)] bg-white z-[999999] overflow-hidden transition-all duration-300 ease-in-out",
-          isOpen ? "translate-x-0 md:w-[30dvw] lg:w-[20dvw] h-[40dvw]" : "-translate-x-full md:translate-x-0 md:w-16",
+          isOpen
+            ? "translate-x-0 w-[80vw] md:w-[30vw] lg:w-[20vw] h-[calc(100dvh-2rem)]"
+            : "-translate-x-full md:translate-x-0 md:w-16",
           className
         )}
       >

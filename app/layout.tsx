@@ -1,24 +1,32 @@
 import type { Metadata } from "next";
-import {  Public_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { ToastProvider } from "@/components/ui/toast-provider";
+import { SearchProvider } from "@/context/searchContext";
 import { AppProvider } from "@/context/appContext";
 
-const publicSans = Public_Sans({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Fintrack",
-  description: "Fintrack interview submission",
+  title: "FinTrack - Financial Management",
+  description: "Track your finances with ease",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={`${publicSans.className} antialiased`}>
-        <AppProvider>{children}</AppProvider>
+      <body className={inter.className}>
+        <AppProvider>
+          <SearchProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </SearchProvider>
+        </AppProvider>
       </body>
     </html>
   );

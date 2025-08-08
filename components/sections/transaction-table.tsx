@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingState } from "@/components/ui/loading-state";
-import { cn, formatAmount,formatDate } from "@/lib/utils";
+import { useSearch } from "@/context/searchContext";
+import { useToast } from "@/components/ui/toast-provider";
+import { cn, formatAmount, formatDate } from "@/lib/utils";
 
 type SortField = "date" | "remark" | "amount" | "type";
 type SortDirection = "asc" | "desc";
@@ -12,6 +14,9 @@ type SortDirection = "asc" | "desc";
 export default function TransactionTable() {
   const [sortField, setSortField] = useState<SortField>("date");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+
+  const { debouncedSearchTerm, isSearching, setIsSearching } = useSearch();
+  const { showToast } = useToast();
 
   const {
     transactions,
@@ -22,7 +27,30 @@ export default function TransactionTable() {
   } = useTransactions({
     sortBy: sortField,
     sortOrder: sortDirection,
+    search: debouncedSearchTerm,
   });
+
+ 
+  useEffect(() => {
+    if (debouncedSearchTerm && !loading && isSearching) {
+      setIsSearching(false);
+      if (transactions.length === 0) {
+        showToast({
+          type: "warning",
+          title: "No results found",
+          message: `No transactions found for "${debouncedSearchTerm}"`,
+          duration: 4000,
+        });
+      } else {
+        showToast({
+          type: "success",
+          title: "Search completed",
+          message: `Found ${transactions.length} transaction${transactions.length === 1 ? '' : 's'} for "${debouncedSearchTerm}"`,
+          duration: 3000,
+        });
+      }
+    }
+  }, [debouncedSearchTerm, loading, isSearching, transactions.length, setIsSearching, showToast]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -56,10 +84,10 @@ export default function TransactionTable() {
   };
 
 
-  if (loading) {
+  if (loading || isSearching) {
     return (
-      <div className="bg-white rounded-lg shadow-sm  border-gray-200">
-        <LoadingState message="Loading transactions..." />
+      <div className="bg-white rounded-lg shadow-sm border-gray-200">
+        <LoadingState message={isSearching ? "Searching transactions..." : "Loading transactions..."} />
       </div>
     );
   }
@@ -67,7 +95,7 @@ export default function TransactionTable() {
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-white rounded-lg shadow-sm border-gray-200">
         <div className="p-6 text-center">
           <p className="text-red-600 mb-4">{error}</p>
           <button 
@@ -81,108 +109,157 @@ export default function TransactionTable() {
     );
   }
 
+
   if (transactions.length === 0) {
+    const isSearchEmpty = debouncedSearchTerm && !loading;
+    
     return (
       <div className="bg-inherit">
         <EmptyState
-          title="No transactions found"
-          description="Get started by adding your first transaction."
+          title={isSearchEmpty ? "No results found" : "No transactions found"}
+          description={
+            isSearchEmpty 
+              ? `Oops! No data found for "${debouncedSearchTerm}". Try adjusting your search.`
+              : "Get started by adding your first transaction."
+          }
           variant="transactions"
-          action={{
-            label: "Add Transaction",
-            onClick: () => {
-              console.log("Add transaction");
-            },
-          }}
+          action={
+            isSearchEmpty
+              ? {
+                  label: "Clear search",
+                  onClick: () => {
+                    
+                  },
+                }
+              : {
+                  label: "Add Transaction",
+                  onClick: () => {
+                    console.log("Add transaction");
+                  },
+                }
+          }
         />
       </div>
     );
   }
 
-  return (
-    <div className="bg-white  overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="">
-            <tr>
-              <th
-                className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => handleSort("date")}
-              >
-                <div className="flex items-center gap-2">
-                  Date {getSortIcon("date")}
-                </div>
-              </th>
-              <th
-                className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => handleSort("remark")}
-              >
-                <div className="flex items-center gap-2">
-                  Remark {getSortIcon("remark")}
-                </div>
-              </th>
-              <th
-                className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => handleSort("amount")}
-              >
-                <div className="flex items-center gap-2">
-                  Amount {getSortIcon("amount")}
-                </div>
-              </th>
-              <th
-                className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100 transition-colors"
-                onClick={() => handleSort("type")}
-              >
-                <div className="flex items-center gap-2">
-                  Type {getSortIcon("type")}
-                </div>
-              </th>
-              <th className="py-3 px-4 text-left font-medium text-gray-700">
-                Currency
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {transactions.map((transaction) => (
-              <tr key={transaction.id} className="hover:bg-gray-50 transition-colors">
-                <td className="py-3 px-4 text-gray-700">
-                  {formatDate(transaction.date)}
-                </td>
-                <td className="py-3 px-4 text-gray-900">
-                  {transaction.remark}
-                </td>
-                <td
-                  className={cn(
-                    "py-3 px-4 font-medium",
-                    transaction.amount >= 0 ? "text-green-600" : "text-red-600"
-                  )}
-                >
-                  {transaction.amount >= 0 ? "+" : "-"}
-                  {formatAmount(transaction.amount)}
-                </td>
-                <td className="py-3 px-4">
-                  <div className="flex items-center">
-                    <span
-                      className={cn(
-                        "w-2 h-2 rounded-full mr-2",
-                        transaction.type === "credit"
-                          ? "bg-green-500"
-                          : "bg-red-500"
-                      )}
-                    />
-                    <span className="capitalize text-gray-700">
-                      {transaction.type}
-                    </span>
-                  </div>
-                </td>
-                <td className="py-3 px-4 text-gray-700">
-                  {transaction.currency}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+ return (
+   <div className="bg-white overflow-hidden">
+     {/* Desktop Table */}
+     <div className="overflow-x-auto hidden md:block">
+       <table className="w-full text-sm">
+         <thead>
+           <tr>
+             <th
+               className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+               onClick={() => handleSort("date")}
+             >
+               <div className="flex items-center gap-2">
+                 Date {getSortIcon("date")}
+               </div>
+             </th>
+             <th
+               className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+               onClick={() => handleSort("remark")}
+             >
+               <div className="flex items-center gap-2">
+                 Remark {getSortIcon("remark")}
+               </div>
+             </th>
+             <th
+               className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+               onClick={() => handleSort("amount")}
+             >
+               <div className="flex items-center gap-2">
+                 Amount {getSortIcon("amount")}
+               </div>
+             </th>
+             <th
+               className="py-3 px-4 text-left font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+               onClick={() => handleSort("type")}
+             >
+               <div className="flex items-center gap-2">
+                 Type {getSortIcon("type")}
+               </div>
+             </th>
+             <th className="py-3 px-4 text-left font-medium text-gray-700">
+               Currency
+             </th>
+           </tr>
+         </thead>
+         <tbody className="divide-y divide-gray-200">
+           {transactions.map((transaction) => (
+             <tr key={transaction.id} className="hover:bg-gray-50">
+               <td className="py-3 px-4">{formatDate(transaction.date)}</td>
+               <td className="py-3 px-4">{transaction.remark}</td>
+               <td
+                 className={cn(
+                   "py-3 px-4 font-medium",
+                   transaction.amount >= 0 ? "text-green-600" : "text-red-600"
+                 )}
+               >
+                 {transaction.amount >= 0 ? "+" : "-"}
+                 {formatAmount(transaction.amount)}
+               </td>
+               <td className="py-3 px-4">
+                 <div className="flex items-center">
+                   <span
+                     className={cn(
+                       "w-2 h-2 rounded-full mr-2",
+                       transaction.type === "credit"
+                         ? "bg-green-500"
+                         : "bg-red-500"
+                     )}
+                   />
+                   <span className="capitalize">{transaction.type}</span>
+                 </div>
+               </td>
+               <td className="py-3 px-4">{transaction.currency}</td>
+             </tr>
+           ))}
+         </tbody>
+       </table>
+     </div>
+
+     {/* Mobile Cards */}
+     <div className="space-y-4 md:hidden p-4">
+       {transactions.map((transaction) => (
+         <div
+           key={transaction.id}
+           className="border rounded-lg p-4 shadow-sm bg-white"
+         >
+           <div className="flex justify-between">
+             <span className="text-gray-500">Date</span>
+             <span className="font-medium">{formatDate(transaction.date)}</span>
+           </div>
+           <div className="flex justify-between">
+             <span className="text-gray-500">Remark</span>
+             <span>{transaction.remark}</span>
+           </div>
+           <div className="flex justify-between">
+             <span className="text-gray-500">Amount</span>
+             <span
+               className={cn(
+                 "font-medium",
+                 transaction.amount >= 0 ? "text-green-600" : "text-red-600"
+               )}
+             >
+               {transaction.amount >= 0 ? "+" : "-"}
+               {formatAmount(transaction.amount)}
+             </span>
+           </div>
+           <div className="flex justify-between">
+             <span className="text-gray-500">Type</span>
+             <span className="capitalize">{transaction.type}</span>
+           </div>
+           <div className="flex justify-between">
+             <span className="text-gray-500">Currency</span>
+             <span>{transaction.currency}</span>
+           </div>
+         </div>
+       ))}
+     </div>
+   </div>
+ );
+
 }

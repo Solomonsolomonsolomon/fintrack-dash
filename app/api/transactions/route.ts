@@ -167,9 +167,7 @@ export async function POST(request: NextRequest) {
       currency,
       type,
     };
-
     sampleTransactions.push(newTransaction);
-
     return NextResponse.json(
       {
         success: true,

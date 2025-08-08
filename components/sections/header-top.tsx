@@ -5,18 +5,26 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LayoutGrid, Menu, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useSearch } from "@/context/searchContext";
+import { useToast } from "@/components/ui/toast-provider";
+
 interface HeaderTopProps {
   onMenuClick?: () => void;
 }
+
 export default function HeaderTop({ onMenuClick }: HeaderTopProps) {
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const searchBtnRef = useRef<HTMLButtonElement | null>(null);
+  
+  const { searchTerm, setSearchTerm, debouncedSearchTerm, isSearching, setIsSearching } = useSearch();
+  const { showToast } = useToast();
+
   useEffect(() => {
     if (searchOpen) inputRef.current?.focus();
   }, [searchOpen]);
+
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node;
@@ -39,12 +47,28 @@ export default function HeaderTop({ onMenuClick }: HeaderTopProps) {
       document.removeEventListener("keydown", handleEsc);
     };
   }, [searchOpen]);
+
   function handleSubmit(e?: React.FormEvent) {
     e?.preventDefault();
+    
+    if (searchTerm.trim()) {
+      setIsSearching(true);
+      showToast({
+        type: "info",
+        title: "Searching...",
+        message: `Looking for "${searchTerm}"`,
+        duration: 2000,
+      });
+    }
+  }
 
-    console.log("search:", searchValue);
-
-    // setSearchOpen(false);
+  function handleClear() {
+    setSearchTerm("");
+    showToast({
+      type: "info",
+      title: "Search cleared",
+      duration: 2000,
+    });
   }
 
   return (
@@ -108,19 +132,21 @@ export default function HeaderTop({ onMenuClick }: HeaderTopProps) {
             >
               <input
                 ref={inputRef}
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search transactions..."
                 className="flex-1 min-w-0 bg-transparent outline-none px-2 py-2 text-sm"
               />
-              <button
-                type="button"
-                onClick={() => setSearchValue("")}
-                className="px-2 py-1 text-sm rounded hover:bg-gray-100"
-                aria-label="Clear"
-              >
-                Clear
-              </button>
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={handleClear}
+                  className="px-2 py-1 text-sm rounded hover:bg-gray-100"
+                  aria-label="Clear"
+                >
+                  Clear
+                </button>
+              )}
               <button
                 type="submit"
                 className="ml-1 rounded px-3 py-1 text-sm border bg-gray-50 hover:bg-gray-100"
