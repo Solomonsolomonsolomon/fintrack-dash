@@ -1,16 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Filter } from "lucide-react";
+import { Transaction } from "@/@types";
 
-interface Transaction {
-  id: string;
-  date: string;
-  remark: string;
-  amount: number;
-  currency: string;
-  type: "credit" | "debit";
-}
 
 const sampleTransactions: Transaction[] = [
   {

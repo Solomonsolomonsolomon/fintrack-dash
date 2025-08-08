@@ -2,7 +2,7 @@
 
 import Header from "@/components/layout/header";
 import { Sidebar } from "@/components/layout/sidebar";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAppContext } from "@/context/appContext";
 export default function ShellLayout({
   children,
@@ -32,7 +32,7 @@ export default function ShellLayout({
         />
 
         <main
-          className={`flex-1 pt-[30dvh] md:pt-[30dvh] transition-all duration-300 ${
+          className={`flex-1 pt-[30dvh] md:pt-[33dvh] transition-all duration-300 ${
             sidebarOpen ? "md:pl-64" : "md:pl-16"
           }`}
         >
