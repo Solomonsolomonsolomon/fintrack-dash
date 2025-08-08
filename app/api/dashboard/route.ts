@@ -20,7 +20,6 @@ export async function GET() {
     const debitsChange = -2.3; 
     const transactionChange = 10.5; 
 
-    
     const summary: DashboardSummary = {
       totalBalance,
       totalCredits,

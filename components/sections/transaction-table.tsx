@@ -17,7 +17,6 @@ export default function TransactionTable() {
 
   const { debouncedSearchTerm, isSearching, setIsSearching } = useSearch();
   const { showToast } = useToast();
-
   const { transactions, loading, error, refetch, setFilters } = useTransactions(
     {
       sortBy: sortField,
@@ -26,12 +25,12 @@ export default function TransactionTable() {
     }
   );
 
-  // Update filters when search changes
+  
   useEffect(() => {
     setFilters({ search: debouncedSearchTerm });
   }, [debouncedSearchTerm, setFilters]);
 
-  // Handle search results
+
   useEffect(() => {
     if (debouncedSearchTerm && !loading && isSearching) {
       setIsSearching(false);
@@ -105,7 +104,7 @@ export default function TransactionTable() {
     );
   };
 
-  // Show loading state
+
   if (loading || isSearching) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
@@ -120,7 +119,7 @@ export default function TransactionTable() {
     );
   }
 
-  // Show error state
+
   if (error) {
     return (
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
@@ -155,7 +154,7 @@ export default function TransactionTable() {
     );
   }
 
-  // Show empty state
+
   if (transactions.length === 0) {
     const isSearchEmpty = debouncedSearchTerm && !loading;
 
@@ -174,7 +173,7 @@ export default function TransactionTable() {
               ? {
                   label: "Clear search",
                   onClick: () => {
-                    // Clear search will be handled by the search context
+                  
                   },
                 }
               : {
