@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -190,7 +191,6 @@ export default function TransactionTable() {
 
   return (
     <div className="bg-white ">
-
       <div className="hidden md:block">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -229,6 +229,9 @@ export default function TransactionTable() {
                     </div>
                   </div>
                 </th>
+                <th className="py-4 px-6 text-left font-semibold text-gray-700">
+                  Currency
+                </th>
                 <th
                   className="py-4 px-6 text-left font-semibold text-gray-700 cursor-pointer hover:bg-gray-100/80 transition-colors duration-200 group"
                   onClick={() => handleSort("type")}
@@ -239,9 +242,6 @@ export default function TransactionTable() {
                       {getSortIcon("type")}
                     </div>
                   </div>
-                </th>
-                <th className="py-4 px-6 text-left font-semibold text-gray-700">
-                  Currency
                 </th>
               </tr>
             </thead>
@@ -257,29 +257,36 @@ export default function TransactionTable() {
                   <td className="py-4 px-6 text-gray-700 font-medium">
                     {formatDate(transaction.date)}
                   </td>
+
                   <td className="py-4 px-6 text-gray-900 font-medium">
                     <div className="max-w-xs truncate">
                       {transaction.remark}
                     </div>
                   </td>
+
                   <td className="py-4 px-6">
                     <div
                       className={cn(
                         "font-bold text-sm px-2 py-1 rounded-md inline-flex items-center",
                         transaction.amount >= 0
-                          ? "text-emerald-700 bg-emerald-50"
-                          : "text-red-700 bg-red-50"
+                          ? "text-emerald-700 "
+                          : "text-red-700 "
                       )}
                     >
                       {transaction.amount >= 0 ? "+" : "-"}
                       {formatAmount(Math.abs(transaction.amount))}
                     </div>
                   </td>
+
+                  <td className="py-4 px-6 text-gray-600 font-medium text-sm">
+                    {transaction.currency}
+                  </td>
+
                   <td className="py-4 px-6">
-                    <div className="flex items-center">
+                    <div className="flex items-center bg-gray-100 px-2 py-1  w-fit rounded-full ">
                       <div
                         className={cn(
-                          "w-2.5 h-2.5 rounded-full mr-3",
+                          "w-2.5 h-2.5 rounded-full mr-2",
                           transaction.type === "credit"
                             ? "bg-emerald-500"
                             : "bg-red-500"
@@ -290,9 +297,6 @@ export default function TransactionTable() {
                       </span>
                     </div>
                   </td>
-                  <td className="py-4 px-6 text-gray-600 font-medium text-sm">
-                    {transaction.currency}
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -301,7 +305,6 @@ export default function TransactionTable() {
       </div>
 
       <div className="md:hidden">
-
         <div className="bg-gray-50/80 border-b border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-gray-700">
@@ -352,7 +355,6 @@ export default function TransactionTable() {
           </div>
         </div>
 
-
         <div className="divide-y divide-gray-100">
           {transactions.map((transaction) => (
             <div
@@ -360,7 +362,6 @@ export default function TransactionTable() {
               className="p-4 hover:bg-gray-50/50 transition-colors duration-200 active:bg-gray-100/50"
             >
               <div className="space-y-3">
-               
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 truncate text-sm">
@@ -382,7 +383,6 @@ export default function TransactionTable() {
                     {formatAmount(Math.abs(transaction.amount))}
                   </div>
                 </div>
-
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
