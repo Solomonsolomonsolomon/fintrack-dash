@@ -1,83 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Transaction } from "@/@types";
-
-
-const sampleTransactions: Transaction[] = [
-  {
-    id: "1",
-    date: "2023-10-01",
-    remark: "Salary",
-    amount: 3000,
-    currency: "USD",
-    type: "credit",
-  },
-  {
-    id: "2",
-    date: "2023-10-02",
-    remark: "Groceries",
-    amount: -150,
-    currency: "USD",
-    type: "debit",
-  },
-  {
-    id: "3",
-    date: "2023-10-03",
-    remark: "Gym Membership",
-    amount: -50,
-    currency: "USD",
-    type: "debit",
-  },
-  {
-    id: "4",
-    date: "2023-10-04",
-    remark: "Dinner",
-    amount: -40,
-    currency: "USD",
-    type: "debit",
-  },
-  {
-    id: "5",
-    date: "2023-10-05",
-    remark: "Movie Tickets",
-    amount: -30,
-    currency: "USD",
-    type: "debit",
-  },
-  {
-    id: "6",
-    date: "2023-10-06",
-    remark: "Rent",
-    amount: -1200,
-    currency: "USD",
-    type: "debit",
-  },
-  {
-    id: "7",
-    date: "2023-10-07",
-    remark: "Utilities",
-    amount: -100,
-    currency: "USD",
-    type: "debit",
-  },
-  {
-    id: "8",
-    date: "2023-10-08",
-    remark: "Car Payment",
-    amount: -400,
-    currency: "USD",
-    type: "debit",
-  },
-  {
-    id: "9",
-    date: "2023-10-09",
-    remark: "Insurance",
-    amount: -200,
-    currency: "USD",
-    type: "debit",
-  },
-];
+import { sampleTransactions } from "@/data/transactionData";
 
 type SortField = "date" | "remark" | "amount" | "type";
 type SortDirection = "asc" | "desc";
@@ -160,81 +84,45 @@ export default function TransactionTable() {
   };
 
   return (
-    <div className="p-6 bg-white">
-      {/* Filter Buttons */}
-      <div className="flex items-center gap-4 mb-6 text-sm">
-        <button
-          onClick={() => setFilterType("all")}
-          className={cn(
-            "px-3 py-1 rounded-md transition-colors",
-            filterType === "all"
-              ? "bg-blue-100 text-blue-700 font-semibold"
-              : "text-gray-600 hover:bg-gray-100"
-          )}
-        >
-          All
-        </button>
-        <button
-          onClick={() => setFilterType("credit")}
-          className={cn(
-            "px-3 py-1 rounded-md transition-colors",
-            filterType === "credit"
-              ? "bg-green-100 text-green-700 font-semibold"
-              : "text-gray-600 hover:bg-gray-100"
-          )}
-        >
-          Credit
-        </button>
-        <button
-          onClick={() => setFilterType("debit")}
-          className={cn(
-            "px-3 py-1 rounded-md transition-colors",
-            filterType === "debit"
-              ? "bg-red-100 text-red-700 font-semibold"
-              : "text-gray-600 hover:bg-gray-100"
-          )}
-        >
-          Debit
-        </button>
+    <div className="p-4 sm:p-6 bg-white">
+  
+      <div className="flex flex-wrap items-center gap-2 mb-6 text-sm">
+        {["all", "credit", "debit"].map((type) => (
+          <button
+            key={type}
+            onClick={() => setFilterType(type as any)}
+            className={cn(
+              "px-3 py-1 rounded-md transition-colors",
+              filterType === type
+                ? type === "credit"
+                  ? "bg-green-100 text-green-700 font-semibold"
+                  : type === "debit"
+                  ? "bg-red-100 text-red-700 font-semibold"
+                  : "bg-blue-100 text-blue-700 font-semibold"
+                : "text-gray-600 hover:bg-gray-100"
+            )}
+          >
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </button>
+        ))}
       </div>
 
-      {/* Transaction Table */}
-      <div className="overflow-x-auto">
+
+      <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="">
+          <thead>
             <tr>
-              <th
-                className="py-3 px-4 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors border-b border-gray-200"
-                onClick={() => handleSort("date")}
-              >
-                <div className="flex items-center gap-2">
-                  Date {getSortIcon("date")}
-                </div>
-              </th>
-              <th
-                className="py-3 px-4 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors border-b border-gray-200"
-                onClick={() => handleSort("remark")}
-              >
-                <div className="flex items-center gap-2">
-                  Remark {getSortIcon("remark")}
-                </div>
-              </th>
-              <th
-                className="py-3 px-4 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors border-b border-gray-200"
-                onClick={() => handleSort("amount")}
-              >
-                <div className="flex items-center gap-2">
-                  Amount {getSortIcon("amount")}
-                </div>
-              </th>
-              <th
-                className="py-3 px-4 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors border-b border-gray-200"
-                onClick={() => handleSort("type")}
-              >
-                <div className="flex items-center gap-2">
-                  Type {getSortIcon("type")}
-                </div>
-              </th>
+              {["date", "remark", "amount", "type"].map((field) => (
+                <th
+                  key={field}
+                  className="py-3 px-4 text-left font-medium text-gray-600 cursor-pointer hover:bg-gray-100 transition-colors border-b border-gray-200"
+                  onClick={() => handleSort(field as SortField)}
+                >
+                  <div className="flex items-center gap-2 capitalize">
+                    {field} {getSortIcon(field as SortField)}
+                  </div>
+                </th>
+              ))}
               <th className="py-3 px-4 text-left font-medium text-gray-600 border-b border-gray-200">
                 Currency
               </th>
@@ -285,6 +173,42 @@ export default function TransactionTable() {
             ))}
           </tbody>
         </table>
+      </div>
+
+
+      <div className="md:hidden space-y-4">
+        {sortedTransactions.map((t) => (
+          <div
+            key={t.id}
+            className="p-4 border border-gray-200 rounded-lg shadow-sm bg-white"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm text-gray-500">{t.date}</span>
+              <span
+                className={cn(
+                  "text-sm font-medium",
+                  t.amount >= 0 ? "text-green-600" : "text-red-600"
+                )}
+              >
+                {t.amount >= 0 ? "+" : "-"}
+                {formatAmount(t.amount)}
+              </span>
+            </div>
+            <p className="text-gray-900 font-medium">{t.remark}</p>
+            <div className="flex justify-between items-center mt-2 text-sm">
+              <div className="flex items-center">
+                <span
+                  className={cn(
+                    "w-2 h-2 rounded-full mr-2",
+                    t.type === "credit" ? "bg-green-500" : "bg-red-500"
+                  )}
+                />
+                <span className="capitalize text-gray-700">{t.type}</span>
+              </div>
+              <span className="text-gray-500">{t.currency}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

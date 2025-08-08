@@ -5,62 +5,31 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HeaderBottomProps } from "@/@types";
+import { PAGE_CONFIG, AVATARS } from "@/data/pageConfig";
 
-export default function HeaderBottom({ sidebarOpen = true }: HeaderBottomProps) {
+export default function HeaderBottom({
+  sidebarOpen = true,
+}: HeaderBottomProps) {
   const pathname = usePathname();
 
-  const getPageTitle = () => {
-    switch (pathname) {
-      case "/":
-      case "/dashboard":
-        return "Wallet Ledger";
-      case "/transactions":
-        return "Wallet Ledger"; 
-      case "/reports":
-        return "Reports";
-      case "/settings":
-        return "Settings";
-      default:
-        return "Wallet Ledger";
-    }
-  };
-
-  const getPageDescription = () => {
-    switch (pathname) {
-      case "/":
-      case "/dashboard":
-        return "Ava, Liam, Noah +12 others";
-      case "/transactions":
-        return "Ava, Liam, Noah +12 others";
-      case "/reports":
-        return "Generate detailed financial reports and analytics";
-      case "/settings":
-        return "Manage your account preferences and settings";
-      default:
-        return "";
-    }
-  };
-
-  const isOverviewActive = pathname === "/" || pathname === "/dashboard";
-  const isTransactionsActive = pathname === "/transactions";
-  const showTabs = isOverviewActive || isTransactionsActive;
+  const page =
+    PAGE_CONFIG[pathname as keyof typeof PAGE_CONFIG] ?? PAGE_CONFIG["/"];
 
   return (
     <div
-      className={
-        `px-6 pt-10 bg-white border-b border-gray-200 transition-all duration-300 ease-in-out ` +
-        (sidebarOpen ? "md:pl-64" : "md:pl-16")
-      }
+      className={`px-6 pt-10 bg-white border-b border-gray-200 transition-all duration-300 ease-in-out ${
+        sidebarOpen ? "md:pl-[30dvw] lg:pl-[20dvw]" : "md:pl-16"
+      }`}
     >
       <div className="flex flex-col gap-6">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <h1 className="text-[28px] leading-8 font-semibold text-gray-900">
-              {getPageTitle()}
+              {page.title}
             </h1>
-            {(isOverviewActive || isTransactionsActive) && (
-              <ChevronDown className="w-4 h-4 text-gray-500" />
-            )}
+
+            {page.showTabs && <ChevronDown className="w-4 h-4 text-gray-500" />}
+
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm">
               <span className="w-2 h-2 rounded-full bg-green-600" />
               Active
@@ -82,56 +51,50 @@ export default function HeaderBottom({ sidebarOpen = true }: HeaderBottomProps) 
           </div>
         </div>
 
-        {(isOverviewActive || isTransactionsActive) && (
+        {page.showTabs && (
           <div className="flex items-center gap-3">
             <div className="flex -space-x-2">
-              {["/avatar1.png", "/avatar2.png", "/avatar3.png", "/avatar4.png"].map(
-                (src, idx) => (
-                  <div
-                    key={idx}
-                    className="w-9 h-9 rounded-full border-2 border-white overflow-hidden shadow-sm"
-                  >
-                    <img
-                      src={src}
-                      alt="avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )
-              )}
+              {AVATARS.map((src, idx) => (
+                <div
+                  key={idx}
+                  className="w-9 h-9 rounded-full border-2 border-white overflow-hidden shadow-sm"
+                >
+                  <img
+                    src={src}
+                    alt="avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
             </div>
-            <span className="text-sm text-gray-600">
-              {getPageDescription()}
-            </span>
+            <span className="text-sm text-gray-600">{page.description}</span>
           </div>
         )}
 
-        {showTabs && (
+        {page.showTabs && (
           <div className="border-b border-gray-200">
             <div className="flex items-center gap-10">
-              <Link href="/dashboard" className="-mb-px">
-                <button
-                  className={`pb-3 text-sm font-medium transition-colors border-b-2 ${
-                    isOverviewActive
-                      ? "text-gray-900 border-gray-900"
-                      : "text-gray-600 border-transparent hover:text-gray-900"
-                  }`}
-                >
-                  Overview
-                </button>
-              </Link>
-
-              <Link href="/transactions" className="-mb-px">
-                <button
-                  className={`pb-3 text-sm font-medium transition-colors border-b-2 ${
-                    isTransactionsActive
-                      ? "text-gray-900 border-gray-900"
-                      : "text-gray-600 border-transparent hover:text-gray-900"
-                  }`}
-                >
-                  Transactions
-                </button>
-              </Link>
+              {[
+                { href: "/dashboard", label: "Overview" },
+                { href: "/transactions", label: "Transactions" },
+              ].map((tab) => {
+                const active =
+                  pathname === tab.href ||
+                  (tab.href === "/dashboard" && pathname === "/");
+                return (
+                  <Link key={tab.href} href={tab.href} className="-mb-px">
+                    <button
+                      className={`pb-3 text-sm font-medium transition-colors border-b-2 ${
+                        active
+                          ? "text-gray-900 border-gray-900"
+                          : "text-gray-600 border-transparent hover:text-gray-900"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}

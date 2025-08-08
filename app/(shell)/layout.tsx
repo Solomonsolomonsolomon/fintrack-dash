@@ -32,8 +32,8 @@ export default function ShellLayout({
         />
 
         <main
-          className={`flex-1 pt-[30dvh] md:pt-[33dvh] transition-all duration-300 ${
-            sidebarOpen ? "md:pl-64" : "md:pl-16"
+          className={`flex-1 pt-[30dvh] md:pt-[20dvh] lg:pt-[33dvh] transition-all duration-300 ${
+            sidebarOpen ? "md:pl-[30dvw] lg:pl-[20dvw] " : "md:pl-16"
           }`}
         >
           <div className="p-6">{children}</div>

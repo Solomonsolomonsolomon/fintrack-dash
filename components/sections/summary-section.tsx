@@ -1,22 +1,10 @@
 import { SummaryCard } from "@/components/ui/summary-card";
-import { DashboardSummary } from "@/@types";
-
-const data: DashboardSummary = {
-  totalBalance: 12345,
-  totalCredits: 7890,
-  totalDebits: 4455,
-  transactionCount: 150,
-  balanceChange: 5,
-  creditsChange: 3,
-  debitsChange: -2,
-  transactionChange: 10,
-};
-
+import data from "@/data/dashboardData";
 export function SummarySection() {
   return (
     <div className="pt-3">
       <p className="text-3xl mb-10 font-semibold">Summary</p>
-      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <SummaryCard
           title="Total Balance"
           value={`$${data.totalBalance.toLocaleString()}`}
